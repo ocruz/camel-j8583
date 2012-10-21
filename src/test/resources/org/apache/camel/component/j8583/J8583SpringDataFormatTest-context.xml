@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:c="http://www.springframework.org/schema/c"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+    <bean id="j8583DataFormat"  class="org.apache.camel.component.j8583.J8583DataFormat">
+        <constructor-arg index="0" ref="isoMessageFactory"/>
+    </bean>
+
+    <bean id="isoMessageFactory" class="com.solab.iso8583.MessageFactory">
+        <property name="assignDate" value="true" />
+        <property name="etx" value="3" />
+        <property name="ignoreLastMissingField" value="true" />
+        <property name="configPath" value="j8583.xml" />
+    </bean>
+
+    <camelContext id="j8583CamelContext" xmlns="http://camel.apache.org/schema/spring">
+
+        <route id="unmarshal">
+            <from uri="direct:unmarshal"/>
+            <unmarshal ref="j8583DataFormat"/>
+            <to uri="mock:unmarshal"/>
+        </route>
+        
+    </camelContext>
+
+</beans>
